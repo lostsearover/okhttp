@@ -71,6 +71,7 @@ class BridgeInterceptor(private val cookieJar: CookieJar) : Interceptor {
       requestBuilder.header("Accept-Encoding", "gzip")
     }
 
+    /** 传递cookies信息 */
     val cookies = cookieJar.loadForRequest(userRequest.url)
     if (cookies.isNotEmpty()) {
       requestBuilder.header("Cookie", cookieHeader(cookies))
@@ -80,8 +81,10 @@ class BridgeInterceptor(private val cookieJar: CookieJar) : Interceptor {
       requestBuilder.header("User-Agent", userAgent)
     }
 
+    /** 继续调用下一个Interceptor */
     val networkResponse = chain.proceed(requestBuilder.build())
 
+    /** Save cookies information */
     cookieJar.receiveHeaders(userRequest.url, networkResponse.headers)
 
     val responseBuilder = networkResponse.newBuilder()

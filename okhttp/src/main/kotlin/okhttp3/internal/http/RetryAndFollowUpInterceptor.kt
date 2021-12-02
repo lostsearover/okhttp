@@ -83,7 +83,7 @@ class RetryAndFollowUpInterceptor(private val client: OkHttpClient) : Intercepto
             recoveredFailures += e.firstConnectException
           }
           newExchangeFinder = false
-          continue
+          continue /** 直接重试 */
         } catch (e: IOException) {
           // An attempt to communicate with a server failed. The request may have been sent.
           if (!recover(e, call, request, requestSendStarted = e !is ConnectionShutdownException)) {
@@ -92,7 +92,7 @@ class RetryAndFollowUpInterceptor(private val client: OkHttpClient) : Intercepto
             recoveredFailures += e
           }
           newExchangeFinder = false
-          continue
+          continue  /** 直接重试 */
         }
 
         // Attach the prior response if it exists. Such responses never have a body.
@@ -105,9 +105,10 @@ class RetryAndFollowUpInterceptor(private val client: OkHttpClient) : Intercepto
         }
 
         val exchange = call.interceptorScopedExchange
+        /** 构造新的Request */
         val followUp = followUpRequest(response, exchange)
 
-        if (followUp == null) {
+        if (followUp == null) { // 如果为空直接返回了
           if (exchange != null && exchange.isDuplex) {
             call.timeoutEarlyExit()
           }
@@ -123,7 +124,7 @@ class RetryAndFollowUpInterceptor(private val client: OkHttpClient) : Intercepto
 
         response.body?.closeQuietly()
 
-        if (++followUpCount > MAX_FOLLOW_UPS) {
+        if (++followUpCount > MAX_FOLLOW_UPS) { // 重试次数
           throw ProtocolException("Too many follow-up requests: $followUpCount")
         }
 
