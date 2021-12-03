@@ -542,7 +542,7 @@ class Http2Stream internal constructor(
       val toWrite: Long
       val outFinished: Boolean
       synchronized(this@Http2Stream) {
-        writeTimeout.enter()
+        writeTimeout.enter() // 添加超时Node．
         try {
           while (writeBytesTotal >= writeBytesMaximum &&
               !finished &&
@@ -551,7 +551,7 @@ class Http2Stream internal constructor(
             waitForIo() // Wait until we receive a WINDOW_UPDATE for this stream.
           }
         } finally {
-          writeTimeout.exitAndThrowIfTimedOut()
+          writeTimeout.exitAndThrowIfTimedOut() // 判断是否超时
         }
 
         checkOutNotClosed() // Kick out if the stream was reset or closed while waiting.
