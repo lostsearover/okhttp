@@ -84,6 +84,7 @@ class RealConnectionPool(
       synchronized(connection) {
         if (requireMultiplexed && !connection.isMultiplexed) return@synchronized
         if (!connection.isEligible(address, routes)) return@synchronized
+        // 复用Connection
         call.acquireConnectionNoEvents(connection)
         return true
       }
@@ -95,6 +96,7 @@ class RealConnectionPool(
     connection.assertThreadHoldsLock()
 
     connections.add(connection)
+    /** 执行一次清理任务 */
     cleanupQueue.schedule(cleanupTask)
   }
 

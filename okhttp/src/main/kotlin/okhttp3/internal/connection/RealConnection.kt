@@ -144,7 +144,7 @@ class RealConnection(
 
   /**
    * Returns true if this is an HTTP/2 connection. Such connections can be used in multiple HTTP
-   * requests simultaneously.
+   * requests simultaneously. 多路复用
    */
   internal val isMultiplexed: Boolean
     get() = http2Connection != null

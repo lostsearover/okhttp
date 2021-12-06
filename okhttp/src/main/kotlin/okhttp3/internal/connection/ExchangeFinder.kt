@@ -110,7 +110,7 @@ class ExchangeFinder(
           pingIntervalMillis = pingIntervalMillis,
           connectionRetryEnabled = connectionRetryEnabled
       )
-
+      // 非GET方法
       // Confirm that the connection is good.
       if (candidate.isHealthy(doExtensiveHealthChecks)) {
         return candidate

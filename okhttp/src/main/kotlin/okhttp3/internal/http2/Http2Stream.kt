@@ -667,6 +667,7 @@ class Http2Stream internal constructor(
    */
   internal inner class StreamTimeout : AsyncTimeout() {
     override fun timedOut() {
+      // 超时，关闭流，由WatchDog线程发起
       closeLater(ErrorCode.CANCEL)
       connection.sendDegradedPingLater()
     }
